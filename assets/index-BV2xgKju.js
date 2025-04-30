@@ -898,4 +898,4 @@ Please change the parent <Route path="${R}"> to <Route path="${R==="/"?"*":`${R}
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
-`;function m4(){return w.jsx("div",{className:"app-container",children:w.jsxs($w,{children:[w.jsx(Rl,{path:"/",element:w.jsx(R2,{})}),w.jsx(Rl,{path:"/battle",element:w.jsx(t4,{})}),w.jsx(Rl,{path:"/replay",element:w.jsx(p4,{})})]})})}const g4=XC({reducer:{battle:pM,pokemon:uM}});BA.createRoot(document.getElementById("root")).render(w.jsx(It.StrictMode,{children:w.jsx(QA,{store:g4,children:w.jsx(hR,{basename:"/pokebattlesim",children:w.jsx(m4,{})})})}));
+`;function m4(){return w.jsx("div",{className:"app-container",children:w.jsxs($w,{children:[w.jsx(Rl,{path:"/",element:w.jsx(R2,{})}),w.jsx(Rl,{path:"/battle",element:w.jsx(t4,{})}),w.jsx(Rl,{path:"/replay",element:w.jsx(p4,{})})]})})}const g4=XC({reducer:{battle:pM,pokemon:uM}});BA.createRoot(document.getElementById("root")).render(w.jsx(It.StrictMode,{children:w.jsx(QA,{store:g4,children:w.jsx(hR,{basename:"/pokebattlesim.github.io",children:w.jsx(m4,{})})})}));
