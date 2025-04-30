@@ -22,9 +22,7 @@ const flatInputStyle = css`
 `;
 
 const StatControls = ({ playerId, pokemon }) => {
-  // --- ЛОГИРОВАНИЕ --- Добавлено
-  console.log(`%cStatControls (${playerId}) RENDERED. Pokemon prop:`, 'color: blue; font-weight: bold;', pokemon ? { ...pokemon } : null);
-  // -----------------
+  console.log(`StatControls (${playerId}) RENDERED. Pokemon prop:`, pokemon ? { ...pokemon } : null);
   
   const dispatch = useDispatch();
   
@@ -51,9 +49,6 @@ const StatControls = ({ playerId, pokemon }) => {
 
   // Инициализация и синхронизация состояния из пропса pokemon
   useEffect(() => {
-    // --- ЛОГИРОВАНИЕ --- Добавлено
-    console.log(`%cStatControls (${playerId}) SYNC EFFECT. Pokemon prop:`, 'color: green;', pokemon ? { ...pokemon } : null);
-    // -----------------
     console.log(`StatControls (${playerId}): Pokemon prop changed to`, pokemon?.name);
     if (pokemon && pokemon.stats /* && pokemon.ev && pokemon.iv */) { // Временно убираем проверку ev/iv
       console.log(`StatControls (${playerId}): Syncing state for`, pokemon.name);

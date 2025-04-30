@@ -1,61 +1,61 @@
-# PokeBattleSim - Симулятор боев покемонов
+# PokeBattleSim - Pokemon Battle Simulator
 
-Интерактивный симулятор боев между покемонами, разработанный на React и Redux.
+An interactive Pokemon battle simulator built with React and Redux.
 
-## Функциональность
+## Features
 
-- Выбор покемонов из базы данных PokeAPI
-- Настройка уровня, IV/EV, способностей, предметов и ходов
-- Расчет характеристик покемонов с учетом всех параметров
-- Симуляция пошагового боя с визуализацией
-- Расчет урона по официальной формуле
-- Журнал боя с подробным описанием ходов
-- Сохранение и загрузка реплеев
+- Pokemon selection from PokeAPI database
+- Configuration of level, IV/EV, abilities, items, and moves
+- Pokemon stat calculation considering all parameters
+- Turn-based battle simulation with visualization
+- Damage calculation using the official formula
+- Detailed battle log with move descriptions
+- Save and load battle replays
 
-## Технологии
+## Technologies
 
 - React 19
 - Redux Toolkit
 - React Router
-- Framer Motion для анимаций
+- Framer Motion for animations
 - Styled Components
-- Axios для API-запросов
-- PokeAPI в качестве источника данных
+- Axios for API requests
+- PokeAPI as data source
 
-## Запуск проекта
+## Getting Started
 
-1. Клонировать репозиторий
+1. Clone the repository
    ```
    git clone https://github.com/yourusername/pokebattlesim.git
    cd pokebattlesim
    ```
 
-2. Установить зависимости
+2. Install dependencies
    ```
    npm install
    ```
 
-3. Запустить в режиме разработки
+3. Run in development mode
    ```
    npm run dev
    ```
 
-## Сборка для продакшена
+## Production Build
 
 ```
 npm run build
 ```
 
-## Особенности реализации
+## Implementation Details
 
-- Полноценный расчет урона с учетом типов, STAB, критических ударов и случайного модификатора
-- Расчет инициативы на основе скорости и приоритета ходов
-- Поддержка статусных эффектов (ожог, паралич, отравление и т.д.)
-- Настройка IV и EV значений для тонкой настройки покемонов
-- Учет влияния предметов и способностей на характеристики
-- Визуализация эффективности атак
-- Автоматический режим боя
+- Comprehensive damage calculation considering types, STAB, critical hits, and random modifier
+- Initiative calculation based on speed and move priority
+- Status effect support (burn, paralysis, poison, etc.)
+- IV and EV value configuration for fine-tuning Pokemon
+- Consideration of items and abilities effects on stats
+- Attack effectiveness visualization
+- Automatic battle mode
 
-## Лицензия
+## License
 
 MIT

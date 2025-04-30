@@ -5,7 +5,7 @@ import { updatePlayer1PokemonStats, updatePlayer2PokemonStats } from '../store/p
 import { fetchPokemonMoves } from '../api/pokeApi';
 import React from 'react';
 
-// Flat style for Input (copied from other components)
+// Input styles
 const flatInputStyle = css`
   padding: 10px;
   border-radius: 4px;
@@ -23,9 +23,7 @@ const flatInputStyle = css`
 `;
 
 const MovesSelector = ({ playerId, pokemon }) => {
-  // --- LOGGING --- Added
-  console.log(`%cMovesSelector (${playerId}) RENDERED. Pokemon prop:`, 'color: purple; font-weight: bold;', pokemon ? { ...pokemon } : null);
-  // -----------------
+  console.log(`MovesSelector (${playerId}) RENDERED. Pokemon prop:`, pokemon ? { ...pokemon } : null);
 
   const dispatch = useDispatch();
   

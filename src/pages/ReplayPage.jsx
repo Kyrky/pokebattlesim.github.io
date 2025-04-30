@@ -134,8 +134,6 @@ const calculateReplayPokemonsState = (initialPokemon1, initialPokemon2, battleLo
             currentPokemon1.currentHp = Math.max(0, (currentPokemon1.currentHp || currentPokemon1.maxHp) - event.damage);
         }
     }
-
-    // TODO: Can add updating move PP or statuses if needed
   }
 
   return { pokemon1: currentPokemon1, pokemon2: currentPokemon2 };

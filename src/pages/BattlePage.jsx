@@ -9,7 +9,7 @@ import ArenaView from '../components/ArenaView';
 import BattleLog from '../components/BattleLog';
 import { calculateDamage } from '../utils/battleCalculator';
 
-// --- STYLES --- (New styles added for layout)
+// --- STYLES ---
 const BattleLayout = styled.div`
   display: flex;
   gap: 20px;
@@ -33,9 +33,8 @@ const MainBattleArea = styled.div`
   flex-grow: 1; // Main area takes remaining space
   max-width: 1000px;
 `;
-// ---------------
 
-// --- Styles --- (Copied from BattlePage.jsx for consistency)
+// --- Status and Controls ---
 const StatusBarsContainer = styled.div`
   display: flex;
   justify-content: space-between;

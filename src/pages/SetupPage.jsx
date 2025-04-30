@@ -170,8 +170,6 @@ const SetupPage = () => {
            throw new Error('Invalid replay file format. battleLog must be an array.');
         }
         
-        // TODO: Add more detailed validation for pokemon and log structure if needed
-
         console.log('Replay data loaded successfully:', replayData);
         navigate('/replay', { state: replayData }); // Navigate with data
 
