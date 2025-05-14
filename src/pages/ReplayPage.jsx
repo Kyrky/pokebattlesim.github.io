@@ -104,15 +104,33 @@ const LoadingContainer = styled.div`
 
 // Function to calculate the state of Pokemon at a specific turn in the replay
 const calculateReplayPokemonsState = (initialPokemon1, initialPokemon2, battleLog, turnIndex) => {
+  // Ensure we have valid Pokemon objects
+  if (!initialPokemon1 || !initialPokemon2) {
+    console.error('Missing Pokemon data in replay calculation');
+    return { 
+      pokemon1: { name: 'Unknown', currentHp: 100, maxHp: 100 },
+      pokemon2: { name: 'Unknown', currentHp: 100, maxHp: 100 }
+    };
+  }
+
   // Deep copy to avoid mutating the original objects from Redux
   let currentPokemon1 = JSON.parse(JSON.stringify(initialPokemon1));
   let currentPokemon2 = JSON.parse(JSON.stringify(initialPokemon2));
 
+  // Ensure Pokemon have names
+  currentPokemon1.name = currentPokemon1.name || 'Pokemon 1';
+  currentPokemon2.name = currentPokemon2.name || 'Pokemon 2';
+
   // Set initial HP (in case it's missing in initialPokemon)
-  if (!currentPokemon1.maxHp) currentPokemon1.maxHp = currentPokemon1.currentHp || 100;
-  if (!currentPokemon2.maxHp) currentPokemon2.maxHp = currentPokemon2.currentHp || 100;
+  currentPokemon1.maxHp = currentPokemon1.maxHp || currentPokemon1.currentHp || 100;
+  currentPokemon2.maxHp = currentPokemon2.maxHp || currentPokemon2.currentHp || 100;
   currentPokemon1.currentHp = currentPokemon1.maxHp;
   currentPokemon2.currentHp = currentPokemon2.maxHp;
+
+  // Ensure battleLog is valid
+  if (!battleLog || !Array.isArray(battleLog) || turnIndex < 0) {
+    return { pokemon1: currentPokemon1, pokemon2: currentPokemon2 };
+  }
 
   // Replay the log up to the current turn
   for (let i = 0; i <= turnIndex; i++) {

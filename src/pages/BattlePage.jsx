@@ -144,6 +144,29 @@ const BattlePage = () => {
         return;
     }
     
+    // Ensure Pokemon have currentHp
+    if (actingPokemon.currentHp === undefined) {
+        console.warn(`[Turn Warn] ${actingPokemon.name} has no currentHp, setting to maxHp.`);
+        const maxHp = actingPokemon.maxHp || 100;
+        if (isPlayer1Turn) {
+            dispatch(updatePlayer1PokemonStats({ currentHp: maxHp }));
+        } else {
+            dispatch(updatePlayer2PokemonStats({ currentHp: maxHp }));
+        }
+        return; // Skip this turn to allow state update
+    }
+    
+    if (targetPokemon.currentHp === undefined) {
+        console.warn(`[Turn Warn] ${targetPokemon.name} has no currentHp, setting to maxHp.`);
+        const maxHp = targetPokemon.maxHp || 100;
+        if (!isPlayer1Turn) {
+            dispatch(updatePlayer1PokemonStats({ currentHp: maxHp }));
+        } else {
+            dispatch(updatePlayer2PokemonStats({ currentHp: maxHp }));
+        }
+        return; // Skip this turn to allow state update
+    }
+    
     console.log(`[Turn Info] Attacker: ${actingPokemon.name} (HP: ${actingPokemon.currentHp})`);
     console.log(`[Turn Info] Defender: ${targetPokemon.name} (HP: ${targetPokemon.currentHp})`);
     

@@ -162,6 +162,7 @@ const TYPE_EFFECTIVENESS = {
 export const calculateDamage = (attacker, defender, move) => {
   // Check base data
   if (!attacker || !defender || !move) {
+    console.error('Missing attacker, defender, or move in calculateDamage');
     return { damage: 0, isCrit: false, effectiveness: 1 };
   }
   
@@ -170,6 +171,25 @@ export const calculateDamage = (attacker, defender, move) => {
     return { damage: 0, isCrit: false, effectiveness: 1 };
   }
   
+  // Ensure required objects exist
+  if (!attacker.stats || !defender.stats) {
+    console.error('Missing stats in attacker or defender');
+    return { damage: 1, isCrit: false, effectiveness: 1 };
+  }
+  
+  if (!attacker.iv) attacker.iv = { hp: 31, attack: 31, defense: 31, 'special-attack': 31, 'special-defense': 31, speed: 31 };
+  if (!attacker.ev) attacker.ev = { hp: 0, attack: 0, defense: 0, 'special-attack': 0, 'special-defense': 0, speed: 0 };
+  if (!defender.iv) defender.iv = { hp: 31, attack: 31, defense: 31, 'special-attack': 31, 'special-defense': 31, speed: 31 };
+  if (!defender.ev) defender.ev = { hp: 0, attack: 0, defense: 0, 'special-attack': 0, 'special-defense': 0, speed: 0 };
+  
+  // Ensure level exists
+  const attackerLevel = attacker.level || 50;
+  const defenderLevel = defender.level || 50;
+  
+  // Ensure types exist
+  const attackerTypes = Array.isArray(attacker.types) ? attacker.types : ['normal'];
+  const defenderTypes = Array.isArray(defender.types) ? defender.types : ['normal'];
+  
   // Determine if the move is physical or special
   const isPhysical = move.category === 'Physical';
   
@@ -177,20 +197,20 @@ export const calculateDamage = (attacker, defender, move) => {
   const attackStat = isPhysical ? 'attack' : 'special-attack';
   const defenseStat = isPhysical ? 'defense' : 'special-defense';
   
-  const attackValue = calculateStat(attacker.stats[attackStat], attacker.level, attacker.iv[attackStat], attacker.ev[attackStat], attacker.nature, attackStat);
-  const defenseValue = calculateStat(defender.stats[defenseStat], defender.level, defender.iv[defenseStat], defender.ev[defenseStat], defender.nature, defenseStat);
+  const attackValue = calculateStat(attacker.stats[attackStat], attackerLevel, attacker.iv[attackStat], attacker.ev[attackStat], attacker.nature, attackStat);
+  const defenseValue = calculateStat(defender.stats[defenseStat], defenderLevel, defender.iv[defenseStat], defender.ev[defenseStat], defender.nature, defenseStat);
   
   // Calculate critical hit (6.25% chance)
   const isCrit = Math.random() < 0.0625;
   const critModifier = isCrit ? 1.5 : 1;
   
   // Calculate STAB (Same Type Attack Bonus)
-  const stab = attacker.types.includes(move.type) ? 1.5 : 1;
+  const stab = attackerTypes.includes(move.type) ? 1.5 : 1;
   
   // Calculate type effectiveness
   let effectiveness = 1;
   
-  defender.types.forEach(defenderType => {
+  defenderTypes.forEach(defenderType => {
     const moveTypeEffectiveness = TYPE_EFFECTIVENESS[move.type] || {};
     effectiveness *= moveTypeEffectiveness[defenderType] || 1;
   });
@@ -200,19 +220,23 @@ export const calculateDamage = (attacker, defender, move) => {
   
   // Calculate base damage
   let damage = Math.floor(
-    (((2 * attacker.level / 5 + 2) * move.power * attackValue / defenseValue) / 50 + 2) * 
+    (((2 * attackerLevel / 5 + 2) * move.power * attackValue / defenseValue) / 50 + 2) * 
     stab * effectiveness * critModifier * randomFactor
   );
   
   // Check items and abilities
   if (attacker.item === 'choice-band' && isPhysical) {
     damage = Math.floor(damage * 1.5);
+  } else if (attacker.item === 'choice-specs' && !isPhysical) {
+    damage = Math.floor(damage * 1.5);
   } else if (attacker.item === 'life-orb') {
     damage = Math.floor(damage * 1.3);
   }
   
-  // Round damage to the nearest integer
+  // Ensure damage is at least 1
   damage = Math.max(1, Math.floor(damage));
+  
+  console.log(`Damage calculation: ${attacker.name} -> ${defender.name}, Move: ${move.name}, Damage: ${damage}`);
   
   return { damage, isCrit, effectiveness };
 };
@@ -220,6 +244,10 @@ export const calculateDamage = (attacker, defender, move) => {
 // Calculate stat considering level, IV, EV, and nature
 const calculateStat = (baseStat, level, iv, ev, nature, statName) => {
   if (!baseStat) return 5; // Default value if base stat is missing
+  
+  // Ensure IV and EV have values
+  const ivValue = iv !== undefined ? iv : (statName === 'hp' ? 31 : 31);
+  const evValue = ev !== undefined ? ev : 0;
   
   // Calculate nature modifier
   let natureModifier = 1;
@@ -249,23 +277,41 @@ const calculateStat = (baseStat, level, iv, ev, nature, statName) => {
   
   // A separate formula is used for HP
   if (statName === 'hp') {
-    return Math.floor(((2 * baseStat + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+    return Math.floor(((2 * baseStat + ivValue + Math.floor(evValue / 4)) * level) / 100) + level + 10;
   }
   
   // For other stats
-  return Math.floor((Math.floor(((2 * baseStat + iv + Math.floor(ev / 4)) * level) / 100) + 5) * natureModifier);
+  return Math.floor((Math.floor(((2 * baseStat + ivValue + Math.floor(evValue / 4)) * level) / 100) + 5) * natureModifier);
 };
 
 // Calculate speed considering items and status
 export const calculateSpeed = (pokemon1, pokemon2) => {
   if (!pokemon1 || !pokemon2) return 1; // Default first player goes first
   
-  let speed1 = calculateStat(pokemon1.stats.speed, pokemon1.level, pokemon1.iv.speed, pokemon1.ev.speed, pokemon1.nature, 'speed');
-  let speed2 = calculateStat(pokemon2.stats.speed, pokemon2.level, pokemon2.iv.speed, pokemon2.ev.speed, pokemon2.nature, 'speed');
+  // Ensure IV and EV objects exist
+  if (!pokemon1.iv) pokemon1.iv = { speed: 31 };
+  if (!pokemon1.ev) pokemon1.ev = { speed: 0 };
+  if (!pokemon2.iv) pokemon2.iv = { speed: 31 };
+  if (!pokemon2.ev) pokemon2.ev = { speed: 0 };
+  
+  // Ensure stats object exists
+  if (!pokemon1.stats) pokemon1.stats = { speed: 50 };
+  if (!pokemon2.stats) pokemon2.stats = { speed: 50 };
+  
+  // Ensure level exists
+  const level1 = pokemon1.level || 50;
+  const level2 = pokemon2.level || 50;
+  
+  let speed1 = calculateStat(pokemon1.stats.speed, level1, pokemon1.iv.speed, pokemon1.ev.speed, pokemon1.nature, 'speed');
+  let speed2 = calculateStat(pokemon2.stats.speed, level2, pokemon2.iv.speed, pokemon2.ev.speed, pokemon2.nature, 'speed');
   
   // Consider paralysis status (reduces speed by 50%)
   const paralysisModifier1 = pokemon1.status === 'paralysis' ? 0.5 : 1;
   const paralysisModifier2 = pokemon2.status === 'paralysis' ? 0.5 : 1;
+  
+  // Consider items
+  if (pokemon1.item === 'choice-scarf') speed1 = Math.floor(speed1 * 1.5);
+  if (pokemon2.item === 'choice-scarf') speed2 = Math.floor(speed2 * 1.5);
   
   const finalSpeed1 = speed1 * paralysisModifier1;
   const finalSpeed2 = speed2 * paralysisModifier2;
@@ -281,11 +327,16 @@ export const calculateSpeed = (pokemon1, pokemon2) => {
 
 // Determine the first attacker based on speed and move priority
 export const determineFirstAttacker = (pokemon1, pokemon2, move1, move2) => {
-  if (!pokemon1 || !pokemon2 || !move1 || !move2) return 1;
+  if (!pokemon1 || !pokemon2) return 1;
+  if (!move1 || !move2) return 1;
+  
+  // Ensure move priority exists
+  const priority1 = move1.priority || 0;
+  const priority2 = move2.priority || 0;
   
   // First, check move priority
-  if (move1.priority !== move2.priority) {
-    return move1.priority > move2.priority ? 1 : 2;
+  if (priority1 !== priority2) {
+    return priority1 > priority2 ? 1 : 2;
   }
   
   // If priorities are equal, check speed
